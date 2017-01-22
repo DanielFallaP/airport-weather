@@ -8,7 +8,7 @@ package com.crossover.trial.weather;
 public enum DataPointType {
     WIND,
     TEMPERATURE,
-    HUMIDTY,
+    HUMIDITY,
     PRESSURE,
     CLOUDCOVER,
     PRECIPITATION

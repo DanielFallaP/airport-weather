@@ -1,18 +1,19 @@
 package com.crossover.trial.weather;
 
-import org.glassfish.grizzly.Connection;
-import org.glassfish.grizzly.http.server.*;
-import org.glassfish.grizzly.nio.transport.TCPNIOTransport;
-import org.glassfish.grizzly.threadpool.ThreadPoolConfig;
-import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.server.ResourceConfig;
+import static java.lang.String.format;
 
 import java.io.IOException;
 import java.net.URI;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static java.lang.String.*;
+import org.glassfish.grizzly.Connection;
+import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.grizzly.http.server.HttpServerFilter;
+import org.glassfish.grizzly.http.server.HttpServerProbe;
+import org.glassfish.grizzly.http.server.Request;
+import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.server.ResourceConfig;
 
 
 /**
@@ -28,7 +29,8 @@ public class WeatherServer {
     public static void main(String[] args) {
         try {
             System.out.println("Starting Weather App local testing server: " + BASE_URL);
-
+            AirportService.getInstance().init();
+            
             final ResourceConfig resourceConfig = new ResourceConfig();
             resourceConfig.register(RestWeatherCollectorEndpoint.class);
             resourceConfig.register(RestWeatherQueryEndpoint.class);

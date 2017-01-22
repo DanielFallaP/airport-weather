@@ -1,9 +1,15 @@
 package com.crossover.trial.weather;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
-import java.io.*;
 
 /**
  * A simple airport loader which reads a file from disk and sends entries to the webservice
@@ -14,26 +20,47 @@ import java.io.*;
  */
 public class AirportLoader {
 
-    /** end point for read queries */
-    private WebTarget query;
-
     /** end point to supply updates */
     private WebTarget collect;
 
     public AirportLoader() {
         Client client = ClientBuilder.newClient();
-        query = client.target("http://localhost:8080/query");
-        collect = client.target("http://localhost:8080/collect");
+        collect = client.target("http://localhost:9090/collect");
     }
 
+    /**
+     * Reads airport input stream, and creates an airport for each line present in stream.
+     * @param airportDataStream the airport input stream
+     * @throws IOException
+     */
     public void upload(InputStream airportDataStream) throws IOException{
         BufferedReader reader = new BufferedReader(new InputStreamReader(airportDataStream));
         String l = null;
+
         while ((l = reader.readLine()) != null) {
-            break;
+        	String[] fields = l.split(",");
+        	String path = "/airport/" + AirportLoader.removeQuoationMarks(fields[4]) 
+        		+ "/" + fields[6] + "/" + fields[7];
+        	WebTarget target = collect.path(path);
+        	target.request().post(null);
         }
     }
+    
+    /**
+     * Removes surrounding quotation marks of input string.
+     * @param s The input string
+     * @return
+     */
+    public static String removeQuoationMarks(String s){
+    	s = s.substring(1);
+    	return s.substring(0, s.length() - 1);
+    }
 
+    /**
+     * Reads file, and creates an airport for each line in file.
+     * @param args
+     * @throws IOException
+     */
     public static void main(String args[]) throws IOException{
         File airportDataFile = new File(args[0]);
         if (!airportDataFile.exists() || airportDataFile.length() == 0) {
@@ -42,7 +69,9 @@ public class AirportLoader {
         }
 
         AirportLoader al = new AirportLoader();
-        al.upload(new FileInputStream(airportDataFile));
+        FileInputStream fileInputStream = new FileInputStream(airportDataFile);
+        al.upload(fileInputStream);
+        fileInputStream.close();
         System.exit(0);
     }
 }

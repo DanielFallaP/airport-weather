@@ -11,14 +11,14 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 public class AirportData {
 
     /** the three letter IATA code */
-    String iata;
+    private String iata;
 
     /** latitude value in degrees */
-    double latitude;
+    private double latitude;
 
     /** longitude value in degrees */
-    double longitude;
-
+    private double longitude;
+    
     public AirportData() { }
 
     public String getIata() {
@@ -29,7 +29,7 @@ public class AirportData {
         this.iata = iata;
     }
 
-    public double getLatitude() {
+	public double getLatitude() {
         return latitude;
     }
 

@@ -23,44 +23,58 @@ public class WeatherClient {
     /** end point to supply updates */
     private WebTarget collect;
 
+    /**
+     * Sets up clients for each service.
+     */
     public WeatherClient() {
         Client client = ClientBuilder.newClient();
         query = client.target(BASE_URI + "/query");
         collect = client.target(BASE_URI + "/collect");
     }
-
+    
+    /**
+     * Pings collect service.
+     */
     public void pingCollect() {
         WebTarget path = collect.path("/ping");
         Response response = path.request().get();
         System.out.print("collect.ping: " + response.readEntity(String.class) + "\n");
     }
 
+    /**
+     * Queries the atmospheric information for provided airport.
+     * @param iata
+     */
     public void query(String iata) {
         WebTarget path = query.path("/weather/" + iata + "/0");
         Response response = path.request().get();
         System.out.println("query." + iata + ".0: " + response.readEntity(String.class));
     }
 
+    /**
+     * Pings the query service
+     */
     public void pingQuery() {
         WebTarget path = query.path("/ping");
         Response response = path.request().get();
         System.out.println("query.ping: " + response.readEntity(String.class));
     }
 
+    /**
+     * Sample weather point collection for BOS airport.
+     * @param pointType
+     * @param first
+     * @param last
+     * @param mean
+     * @param median
+     * @param count
+     */
     public void populate(String pointType, int first, int last, int mean, int median, int count) {
         WebTarget path = collect.path("/weather/BOS/" + pointType);
         DataPoint dp = new DataPoint.Builder()
-                .withFirst(first).withLast(last).withMean(mean).withMedian(median).withCount(count)
+                .withFirst(first).withThird(last).withSecond(mean).withMean(median).withCount(count)
                 .build();
-        Response post = path.request().post(Entity.entity(dp, "application/json"));
-    }
-
-    public void exit() {
-        try {
-            collect.path("/exit").request().get();
-        } catch (Throwable t) {
-            // swallow
-        }
+         Response post = path.request().post(Entity.entity(dp, "application/json"));
     }
 
     public static void main(String[] args) {
@@ -75,7 +89,6 @@ public class WeatherClient {
         wc.query("MMU");
 
         wc.pingQuery();
-        wc.exit();
         System.out.print("complete");
         System.exit(0);
     }

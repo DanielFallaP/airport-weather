@@ -1,6 +1,11 @@
 package com.crossover.trial.weather;
 
-import javax.ws.rs.*;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -32,9 +37,9 @@ public interface WeatherCollectorEndpoint {
      */
     @POST
     @Path("/weather/{iata}/{pointType}")
-    Response updateWeather(@PathParam("iata") String iataCode,
-                           @PathParam("pointType") String pointType,
-                           String datapointJson);
+    Response updateWeather(@PathParam("iata") String iata,
+    					   @PathParam("pointType") String pointType,
+    					   String dataPointJson);
 
     /**
      * Return a list of known airports as a json formatted list
@@ -68,8 +73,8 @@ public interface WeatherCollectorEndpoint {
     @POST
     @Path("/airport/{iata}/{lat}/{long}")
     Response addAirport(@PathParam("iata") String iata,
-                        @PathParam("lat") String latString,
-                        @PathParam("long") String longString);
+    					@PathParam("lat") String latString,
+    					@PathParam("long") String longString);
 
     /**
      * Remove an airport from the known airport list
@@ -81,6 +86,11 @@ public interface WeatherCollectorEndpoint {
     @Path("/airport/{iata}")
     Response deleteAirport(@PathParam("iata") String iata);
 
+    /**
+     * Stops the server
+     * 
+     * @return
+     */
     @GET
     @Path("/exit")
     Response exit();
